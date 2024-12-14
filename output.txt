@@ -1,0 +1,5 @@
+MCMXCIV: 1994
+ABC123: Invalid Roman numeral
+MMXXIII: 2023
+IV: 4
+ILLEGAL: Invalid Roman numeral

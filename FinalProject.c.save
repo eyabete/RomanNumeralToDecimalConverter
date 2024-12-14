@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// Function prototypes
+int romanToDecimal(char *roman);
+int getValue(char romanChar);
+void writeResultToFileAndTerminal(FILE *output, const char *roman, int decimal, int valid);
+void processFile(const char *inputFile, const char *outputFile);
+int isValidRomanNumeral(const char *roman);
+
+int main() {
+    // File paths
+    const char *inputFile = "input.txt";
+    const char *outputFile = "output.txt";
+
+    // Process the file and convert Roman numerals
+    processFile(inputFile, outputFile);
+
+    printf("Conversion completed. Results saved to '%s'.\n", outputFile);
+    return 0;
+}
+
+// Function to process the input file and write results to the output file
+void processFile(const char *inputFile, const char *outputFile) {
+    FILE *input = fopen(inputFile, "r");
+    FILE *output = fopen(outputFile, "w");
+
+    if (!input || !output) {
+        printf("Error: Unable to open files.\n");
+        return;
+    }
+
+    char roman[100];
+    while (fscanf(input, "%s", roman) != EOF) {
+        if (isValidRomanNumeral(roman)) {
+            int decimal = romanToDecimal(roman);
+            writeResultToFileAndTerminal(output, roman, decimal, 1);
+        } else {
+            writeResultToFileAndTerminal(output, roman, 0, 0);
+        }
+    }
+
+    fclose(input);
+    fclose(output);
+}
+
+// Function to validate if a string is a Roman numeral
+int isValidRomanNumeral(const char *roman) {
+    for (int i = 0; roman[i] != '\0'; i++) {
+        if (!strchr("IVXLCDM", toupper(roman[i]))) {
+            return 0; // Invalid character found
+        }
+    }
+    return 1; // All characters are valid Roman numerals
+}
+
+// Function to convert Roman numeral to decimal
+int romanToDecimal(char *roman) {
+    int total = 0;
+    int length = strlen(roman);
+    for (int i = 0; i < length; i++) {
+        int current = getValue(toupper(roman[i]));
+        int next = (i + 1 < length) ? getValue(toupper(roman[i + 1])) : 0;
+
+        if (current < next) {
+            total -= current;
+        } else {
+            total += current;
+        }
+    }
+    return total;
+}
+
+// Function to get the integer value of a Roman numeral
+int getValue(char romanChar) {
+    switch (romanChar) {
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+        default: return 0; // Should not occur if input is validated
+    }
+}
+
+// Function to write the conversion result to the output file and display in terminal
+void writeResultToFileAndTerminal(FILE *output, const char *roman, int decimal, int valid) {
+    if (valid) {
+        printf("%s: %d\n", roman, decimal);
+        fprintf(output, "%s: %d\n", roman, decimal);
+    } else {
+        printf("%s: Invalid Roman numeral\n", roman);
+        fprintf(output, "%s: Invalid Roman numeral\n", roman);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
